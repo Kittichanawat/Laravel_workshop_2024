@@ -1,4 +1,4 @@
-@livewire('navbar')
+
 
 
 @livewire('sidebar')
