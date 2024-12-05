@@ -12,7 +12,7 @@
                 แก้ไขโปรไฟล์
             </button>
             <button wire:click="showModal =true"
-             class="border border-orange-400 text-orange-400 px-6 py-3 rounded-2xl">
+             class="border border-orange-400 text-orange-400 px-6 py-3 rounded-2xl hover:bg-orange-400 hover:text-white">
                 <span>ออกจากระบบ</span>
                 <i class="fa-solid fa-sign-out ms-3"></i>
             </button>

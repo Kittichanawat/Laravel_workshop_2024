@@ -11,7 +11,4 @@ class CustomerModel extends Model
     public function room(){
         return $this->belongsTo(RoomModel::class, 'room_id', 'id');
     }
-}
-
-
-?>
+} 

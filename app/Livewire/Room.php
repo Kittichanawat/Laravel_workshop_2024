@@ -8,7 +8,6 @@ class Room extends Component
 {
     public $rooms = [];
     public $showModal = false;
-    public $showModalEdit = false;
     public $showModalDelete = false;
     public $id;
     public $name;
@@ -24,6 +23,10 @@ class Room extends Component
     }
     public function openModal(){
         $this->showModal = true;
+        $this->from_number = '';
+        $this->to_number = '';
+        $this->price_per_day = '';
+        $this->price_per_month = '';
     }
     public function openModalEdit($id){
         $this->showModalEdit = true;
@@ -90,6 +93,8 @@ class Room extends Component
             $room->price_per_month = $this->price_per_month;
             $room->status = "use";
             $room->save();
+            $this->showModal = false;
+            $this->fetchData();
         }
     }
 

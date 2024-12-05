@@ -40,8 +40,10 @@ class Navbar extends Component
         $user->password = $this->password ?? $user->password;
         $user->save();
 
-     
+        $this->showModalEdit = false;
         $this->saveSuccess = true;
+        
+        $this->clearError();
     }
     public function mount()
     {
