@@ -20,6 +20,6 @@
 <body>
     @yield('content')
 
-    @livewireScipts
+  
 </body>
 </html>

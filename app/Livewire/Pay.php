@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Livewire;
 
 use Livewire\Component;
@@ -14,17 +15,17 @@ class Pay extends Component {
     public $showModalPayLogRestore = false;
     public $pays = [];
     public $payLogs = [];
-    public $listPay = [];
+    public $listPays = [];
     public $payId;
     public $payName;
     public $payRemark;
     public $payNameForDelete;
     public $payLogDate;
     public $payLogAmount = [];
-    public $payLogEditId ;
+    public $payLogEditId;
     public $payLogEditName;
     public $payLogEditRemark;
-    public $patLogEditAmount;
+    public $payLogEditAmount;
     public $payLogEditDate;
     public $payLogDeleteId;
     public $payLogRestoreId;
@@ -33,11 +34,12 @@ class Pay extends Component {
         $this->fetchData();
         $this->payLogDate = date('Y-m-d');
     }
+
     public function fetchData() {
         $this->pays = PayModel::where('status', 'use')
-        ->orderBy('id', 'desc')
-        ->get();
-        $this->payLogs = PayLogModel::where('status', 'use')->get();
+            ->orderBy('id', 'desc')
+            ->get();
+        $this->payLogs = PayLogModel::orderBy('id', 'desc')->get();
     }
 
     public function render() {
@@ -47,46 +49,51 @@ class Pay extends Component {
     public function openModalPay() {
         $this->showModalPay = true;
     }
-    
+
     public function closeModalPay() {
         $this->showModalPay = false;
     }
 
     public function openModalPayLog() {
-        $this->showModalPayLog = false;
-        $this->listPays = PayModel::where('status',  'use')
-        ->orderBy('id', 'desc')
-        ->get();
+        $this->showModalPayLog = true;
+        $this->listPays = PayModel::where('status', 'use')
+            ->orderBy('id', 'desc')
+            ->get();
     }
+
     public function closeModalPayLog() {
-        $this->showModalPayLog = false ;
+        $this->showModalPayLog = false;
     }
+
     public function openModalPayLogEdit($id) {
         $this->showModalPayLogEdit = true;
 
         $payLog = PayLogModel::find($id);
-        $this->payLogEditId = $id;
+        $this->payLogEditId = $payLog->id;
         $this->payLogEditName = $payLog->pay->name;
         $this->payLogEditRemark = $payLog->remark;
         $this->payLogEditAmount = $payLog->amount;
-        $this->payLogEditDate = date('Y-m-d', strtotime($payLog->date));
-
+        $this->payLogEditDate = date('Y-m-d', strtotime($payLog->pay_date));
     }
+
     public function closeModalPayLogEdit() {
         $this->showModalPayLogEdit = false;
     }
+
     public function savePay() {
         $pay = new PayModel();
 
         if ($this->payId) {
             $pay = PayModel::find($this->payId);
         }
+
         $pay->name = $this->payName;
         $pay->remark = $this->payRemark;
         $pay->status = 'use';
         $pay->save();
 
         $this->fetchData();
+        
         $this->payName = '';
         $this->payRemark = '';
         $this->payId = null;
@@ -95,7 +102,7 @@ class Pay extends Component {
     public function editPay($id) {
         $pay = PayModel::find($id);
 
-        $this->payId = $id;
+        $this->payId = $pay->id;
         $this->payName = $pay->name;
         $this->payRemark = $pay->remark;
     }
@@ -105,6 +112,7 @@ class Pay extends Component {
         $this->payId = $id;
         $this->payNameForDelete = $name;
     }
+
     public function deletePay() {
         $pay = PayModel::find($this->payId);
         $pay->status = 'delete';
@@ -115,8 +123,7 @@ class Pay extends Component {
     }
 
     public function closeModalPayDelete() {
-        $this->showModalPayDelete = false ;
-    
+        $this->showModalPayDelete = false;
     }
 
     public function openModalPayLogDelete($id) {
@@ -127,6 +134,7 @@ class Pay extends Component {
     public function closeModalPayLogDelete() {
         $this->showModalPayLogDelete = false;
     }
+
     public function deletePayLog() {
         $payLog = PayLogModel::find($this->payLogDeleteId);
         $payLog->status = 'delete';
@@ -140,6 +148,7 @@ class Pay extends Component {
         $this->showModalPayLogRestore = true;
         $this->payLogRestoreId = $id;
     }
+
     public function closeModalPayLogRestore() {
         $this->showModalPayLogRestore = false;
     }
@@ -152,10 +161,11 @@ class Pay extends Component {
         $this->fetchData();
         $this->closeModalPayLogRestore();
     }
+
     public function savePayLog() {
         $arrayPayLogAmount = $this->payLogAmount;
 
-        foreach ($arrayPayAmount as $key => $value) {
+        foreach ($arrayPayLogAmount as $key => $value) {
             $payLog = new PayLogModel();
             $payLog->pay_date = $this->payLogDate;
             $payLog->amount = $value;
@@ -169,6 +179,7 @@ class Pay extends Component {
         $this->payLogDate = date('Y-m-d');
         $this->payLogAmount = [];
     }
+
     public function editPayLog($id) {
         $payLog = PayLogModel::find($id);
     }
@@ -180,13 +191,7 @@ class Pay extends Component {
         $payLog->remark = $this->payLogEditRemark;
         $payLog->save();
 
-        $this->closeModalPayLogEdit();
         $this->fetchData();
+        $this->closeModalPayLogEdit();
     }
-    
-
- 
-
 }
-
-?>
