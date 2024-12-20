@@ -10,6 +10,11 @@ class Sidebar extends Component
     
     public function mount()
     {
+        $user_id = session()->get('user_id');
+        if(!isset($user_id)) {
+            return redirect()->to('/');
+        }
+
         $this->currentMenu = session()->get('current_menu' ) ?? '';
     }
 

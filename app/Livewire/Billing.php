@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Log;
 class Billing extends Component {
     public $showModal = false;
     public $showModalDelete = false;
+    public $showModalGetMoney = false;
     public $rooms = [];
     public $billings = [];
     public $id;
@@ -41,6 +42,19 @@ class Billing extends Component {
     public $waterCostPerUnit = 0;
     public $electricCostPerUnit = 0;
     public $roomNameForEdit = '';
+
+
+    //get money
+    public $roomNameForGetMoney = '';
+    public $customerNameForGetMoney = '';
+    public $payedDateForGetMoney = '';
+    public $moneyAdded = 0;
+    public $remarkForGetMoney = '';
+    public $sumAmountForGetMoney = 0;
+    public $amountForGetMoney = 0;
+    public $billing;
+
+
 
     public function mount() {
         $this->fetchData();
@@ -204,5 +218,52 @@ class Billing extends Component {
 
         $this->fetchData();
         $this->closeModalDelete();
+    }
+
+
+    public function openModalGetMoney($id) {
+        $billing = BillingModel::find($id);
+        $this->showModalGetMoney = true;
+        $this->id = $id;
+        $this->roomNameForGetMoney = $billing->room->name;
+        $this->customerNameForGetMoney = $billing->getCustomer()->name;
+        $this->sumAmountForGetMoney = $billing->sumAmount();
+        $this->payedDateForGetMoney = date('Y-m-d');
+        $this->moneyAdded = $billing->money_added ?? 0;
+        $this->remarkForGetMoney = $billing->remark ?? '';
+        $this->amountForGetMoney = $this->sumAmountForGetMoney + $this->moneyAdded;
+    }
+
+    public function closeModalGetMoney() {
+        $this->showModalGetMoney = false;
+        $this->id = null;
+        $this->roomNameForGetMoney = '';
+        $this->customerNameForGetMoney = '';
+        $this->sumAmountForGetMoney = 0;
+        $this->payedDateForGetMoney = '';
+        $this->moneyAdded = 0;
+        $this->remarkForGetMoney = '';
+        $this->amountForGetMoney = 0;
+    }
+
+    public function handleChangeAmountForGetMoney() {
+        $this->moneyAdded = $this->moneyAdded == '' ? 0 : $this->moneyAdded;
+        $this->amountForGetMoney = $this->amountForGetMoney + $this->moneyAdded;
+    
+    }
+    public function printBilling($billingId) {
+        return redirect()->to('print-billing/' . $billingId);
+    }
+
+    public function saveGetMoney() {
+        $billing = BillingModel::find($this->id);
+        $billing->payed_date = $this->payedDateForGetMoney;
+        $billing->remark = $this->remarkForGetMoney;
+        $billing->money_added = $this->moneyAdded;
+        $billing->status = 'paid';
+        $billing->save();
+
+        $this->fetchData();
+        $this->closeModalGetMoney();
     }
 }
